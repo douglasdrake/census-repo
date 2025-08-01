@@ -1,0 +1,25 @@
+# RStudio files
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+
+# R package build files
+*.Rcheck/
+*.tar.gz
+*.Rbuildignore
+
+# Data and results
+data/
+results/
+temp/
+src/
+*.csv
+*.rds
+*.fst
+
+# Compiled outputs
+*.log
+*.html
+*.pdf
+*.md
