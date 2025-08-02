@@ -1,4 +1,13 @@
 # Process the 1970 source files -------------------------------------------
+#
+# 1. read the downloaded files
+# 2. process from 18 age groups to 5
+# 3. create a race + ethnicity variable from race / origin data
+# 4. aggregate to state and national level
+# 5. use consistent variable names and ordering for later joins.
+# 6. combine results of states and US (US fips code 00)
+# 7. write to .csv.gz
+#
 
 suppressPackageStartupMessages(library(tidyverse))
 

@@ -1,4 +1,14 @@
 # Process 2000 files ---------------------------------------------------
+#
+# 1. read the downloaded files
+# 2. process from 18 age groups to 5
+# 3. create a race + ethnicity variable from race / origin data
+# 4. aggregate to state and national level
+# 5. use consistent variable names and ordering for later joins.
+# 6. combine results of states and US (US fips code 00)
+# 7. write to .csv.gz
+#
+
 # The key for Age group code is as follows:
 #  99 = a total column
 #   0 = <1 year
@@ -112,40 +122,3 @@ process_2000 <- function(source_files, destination_path) {
   combined_df <- rbind(states_2000, us_2000)
   write_csv(combined_df, destination_path)
 }
-
-# df2000 %>%
-#   filter((YEAR %in% c(2:11)) & (AGEGRP != 99)) %>%
-#   summarize(tot = sum(TOT_POP))
-
-# > df2000 %>% filter((YEAR %in% c(2:11)) & (AGEGRP != 99)) %>% summarize(tot = sum(TOT_POP))
-# # A tibble: 1 × 1
-# tot
-# <dbl>
-#   1 2943663003
-# > df2000 %>% filter((YEAR %in% c(2:11)) & (AGEGRP == 99)) %>% summarize(tot = sum(TOT_POP))
-# # A tibble: 1 × 1
-# tot
-# <dbl>
-#   1 2943663003
-
-# > us_2000 %>% group_by(year) %>% summarize(uspop = sum(population))
-# # A tibble: 10 × 2
-# year     uspop
-# <dbl>     <int>
-# 1  2000 282162411
-# 2  2001 284968955
-# 3  2002 287625193
-# 4  2003 290107933
-# 5  2004 292805298
-# 6  2005 295516599
-# 7  2006 298379912
-# 8  2007 301231207
-# 9  2008 304093966
-# 10  2009 306771529
-# > write_csv(us_2000, "us_2000_asrpe.csv")
-#
-# > us_2000 %>% group_by(year) %>% summarize(uspop = sum(population)) %>% summarize(tot = sum(uspop))
-# # A tibble: 1 × 1
-# tot
-# <dbl>
-#   1 2943663003

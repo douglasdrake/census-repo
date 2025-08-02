@@ -1,4 +1,13 @@
 # Process 2020 files ---------------------------------------------------
+#
+# 1. read the downloaded files
+# 2. process from 18 age groups to 5
+# 3. create a race + ethnicity variable from race / origin data
+# 4. aggregate to state and national level
+# 5. use consistent variable names and ordering for later joins.
+# 6. combine results of states and US (US fips code 00)
+# 7. write to .csv.gz
+#
 
 # The key for Age group code is as follows:
 #   0 = Total
@@ -94,9 +103,6 @@ process_2020 <- function(source_files, destination_file) {
     left_join(state_names, by = join_by(state_fips)) %>%
     relocate(year, state_fips, state_name, age, sex, race_p_ethnicity, population)
 
-  # Save the results for states:
-  # write_csv(states_2020, "states_2020_asrpe.csv")
-
   # Create US summary file with race_p_ethnicity ----------------------------
 
   us_2020 <- states_2020 %>%
@@ -108,24 +114,3 @@ process_2020 <- function(source_files, destination_file) {
   combined_df <- rbind(states_2020, us_2020)
   write_csv(combined_df, destination_file)
 }
-
-# df2020 %>%
-#  filter((YEAR %in% 2:6) & (AGEGRP == 0)) %>%
-#  group_by(YEAR) %>%
-#  summarise(uspop = sum(TOT_POP))
-# # A tibble: 5 × 2
-# YEAR     uspop
-# <int>     <int>
-#   1     2 331577720
-# 2     3 332099760
-# 3     4 334017321
-# 4     5 336806231
-# 5     6 340110988
-
-# df2020 %>%
-#  filter((YEAR %in% 2:6) & (AGEGRP != 0)) %>%
-#  summarize(tot = sum(TOT_POP))
-# A tibble: 1 × 1
-# tot
-# <int>
-#   1 1674612020

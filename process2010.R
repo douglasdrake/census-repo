@@ -1,4 +1,14 @@
 # Process 2010 files ---------------------------------------------------
+#
+# 1. read the downloaded files
+# 2. process from 18 age groups to 5
+# 3. create a race + ethnicity variable from race / origin data
+# 4. aggregate to state and national level
+# 5. use consistent variable names and ordering for later joins.
+# 6. combine results of states and US (US fips code 00)
+# 7. write to .csv.gz
+#
+
 # The key for Age group code is as follows:
 #   0 = Total
 #   1 = 0-4 years
@@ -20,19 +30,6 @@
 #   17 = 80-84 years
 #   18 = 85 years and over
 #
-# A tibble: 10 × 2
-# year       tot
-# <dbl>     <int>
-# 1  2010 309327143
-# 2  2011 311583481
-# 3  2012 313877662
-# 4  2013 316059947
-# 5  2014 318386329
-# 6  2015 320738994
-# 7  2016 323071755
-# 8  2017 325122128
-# 9  2018 326838199
-# 10  2019 328329953
 
 # Required libraries, paths, globals --------------------------------------
 
@@ -115,43 +112,3 @@ process_2010 <- function(source_files, destination_path) {
   combined_df <- rbind(states_2010, us_2010)
   write_csv(combined_df, destination_path)
 }
-
-# df2010 %>%
-#  filter((YEAR %in% c(3:12)) & (AGEGRP != 00)) %>%
-#  summarize(tot = sum(TOT_POP))
-# # A tibble: 1 × 1
-# tot
-# <dbl>
-#   1 3193335591
-
-# Make a lookup table for state_fips --------------------------------------
-
-# df2010 %>%
-#  select(STATE, STNAME) %>%
-#  distinct() %>%
-#  rename(state_fips = STATE, state_name = STNAME) -> state_lookup
-# > dim(state_lookup)
-# [1] 51  2
-# > write_csv(state_lookup, "state_names.csv")
-
-# > us_2010 %>% group_by(year) %>% summarize(uspop = sum(population))
-# # A tibble: 10 × 2
-# year     uspop
-# <dbl>     <int>
-#   1  2010 309327143
-# 2  2011 311583481
-# 3  2012 313877662
-# 4  2013 316059947
-# 5  2014 318386329
-# 6  2015 320738994
-# 7  2016 323071755
-# 8  2017 325122128
-# 9  2018 326838199
-# 10  2019 328329953
-# > write_csv(us_2010, "us_2010_asrpe.csv")
-#
-# > us_2010 %>% group_by(year) %>% summarize(uspop = sum(population)) %>% summarize(tot = sum(uspop))
-# A tibble: 1 × 1
-# tot
-# <dbl>
-#   1 3193335591

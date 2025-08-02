@@ -1,5 +1,15 @@
 # Download Census files, process and save results -------------------------
 
+# For reproducibility of data used in apps and dashbords, these functions
+# are provided.  The functions:
+#   1. Create a directory structure to store downloads and processed files.
+#   2. Download the files with curl.
+#   3. Process the data by decade since the formats and contents of the
+#      files differ by decade.
+#   4. Combine the 6 decade files to produce one for use later.
+# Editing the processYEAR.R files will allow one to change what results
+# are saved from the original data.
+
 library(curl)
 library(fs)
 
@@ -192,9 +202,6 @@ process_all <- function() {
 # Combine decades to write the final product ------------------------------
 
 combine_decades <- function() {
-  # For now until all decades are working...
-  # return()
-
   decades <- seq(1970, 2020, by = 10)
   source_files <- decades %>%
     map_chr(\(x) (paste0("states-asrpe", as.character(x), ".csv.gz")))
@@ -226,6 +233,7 @@ make_state_names <- function() {
 # Function to set up directories, download files and process --------------
 
 create_census_repo <- function(refresh = FALSE) {
+  # use refresh = TRUE to update existing download files
   create_download_directories()
   make_state_names()
   download_all(refresh)

@@ -1,8 +1,15 @@
 # Process 1980 source file ------------------------------------------------
+#
+# 1. read the downloaded files
+# 2. process from 18 age groups to 5
+# 3. create a race + ethnicity variable from race / origin data
+# 4. aggregate to state and national level
+# 5. use consistent variable names and ordering for later joins.
+# 6. combine results of states and US (US fips code 00)
+# 7. write to .csv.gz
+#
 
 suppressPackageStartupMessages(library(tidyverse))
-
-# src1980 <- "src/1980/co-asr-1980-1989.csv"
 
 process_1980 <- function(source_files, destination_path) {
   age_names <- c(
@@ -12,6 +19,8 @@ process_1980 <- function(source_files, destination_path) {
 
   src1980 <- source_files[1]
 
+  # The source file has been unstable - switched to vroom for difficulties
+  # parsing the file.
   df1980 <- vroom::vroom(
     src1980,
     skip = 14,
@@ -63,21 +72,3 @@ process_1980 <- function(source_files, destination_path) {
   combined_df <- rbind(states_df_1980, us_df_1980)
   write_csv(combined_df, destination_path)
 }
-
-# write_csv(states_df_1980, "tests/states_1980_reduced_age.csv")
-# write_csv(us_df_1980, "tests/us_1980_reduced_age.csv")
-# read_csv("with-pandas/data/1980/us_1980.csv") -> us_py
-# us_py %>% select(!id) -> us_py
-# us_py %>% mutate(year = as.integer(year), age=ordered(age, levels=c("0-19", "20-34", "35-49", "50-64", "65+")), population = as.integer(population)) -> us_py
-# all.equal(us_py, us_df_1980 %>% ungroup())
-# states_py <- read_csv("with-pandas/data/1980/states_1980.csv", col_types="iicccci")
-# states_py
-# states_py %>% select(!id) -> states_py
-# states_py %>% mutate(age = ordered(age, levels = c("0-19", "20-34", "35-49", "50-64", "65+"))) -> states_py
-# states_df_1980 %>% ungroup() -> states_df_1980
-# all.equal(states_df_1980, states_py)
-# sum(states_df_1980$population - states_py$population)
-# > all.equal(states_df_1980, states_py)
-# [1] TRUE
-# > sum(states_df_1980$population - states_py$population)
-# [1] 0

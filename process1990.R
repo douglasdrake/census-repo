@@ -1,4 +1,14 @@
 # Preprocess 1990 files ---------------------------------------------------
+#
+# 1. read the downloaded files
+# 2. process from 18 age groups to 5
+# 3. create a race + ethnicity variable from race / origin data
+# 4. aggregate to state and national level
+# 5. use consistent variable names and ordering for later joins.
+# 6. combine results of states and US (US fips code 00)
+# 7. write to .csv.gz
+#
+
 # The key for Age group code is as follows:
 #   0 = <1 year
 #   1 = 1-4 years
@@ -35,13 +45,13 @@
 #   2 = Hispanic or Latino
 
 # Required libraries, paths, globals --------------------------------------
+
 suppressPackageStartupMessages({
   library(tidyverse)
   library(duckdb)
   library(duckplyr)
 })
 
-# base_1990 <- "src/1990/stch-icen"
 
 process_1990 <- function(source_files, destination_path) {
   age_names <- c(
@@ -117,7 +127,6 @@ process_1990 <- function(source_files, destination_path) {
     left_join(state_names, by = join_by(state_fips)) %>%
     relocate(year, state_fips, state_name, age, sex, race_p_ethnicity, population)
 
-
   # Create US summary file with race_p_ethnicity ----------------------------
 
   us_df_1990 <- states_1990_rpe %>%
@@ -129,32 +138,3 @@ process_1990 <- function(source_files, destination_path) {
   combined_df <- rbind(states_1990_rpe, us_df_1990)
   write_csv(combined_df, destination_path)
 }
-# Save the work to compare with pandas results ----------------------------
-
-# write_csv(states_df_1990, "tests/states_1990_asrpe.csv")
-# write_csv(us_df_1900, "tests/us_1990_asrpe.csv")
-
-# Read the state files back for R and pandas to compare -------------------
-
-# states_py <- read_csv("../with-pandas/data/1990/states_rpe.csv", col_types = "iicccci")
-# states_py <- states_py %>%
-#   select(!id) %>%
-#   mutate(
-#     race_p_ethnicity = if_else(race_p_ethnicity == "Hispanic", "H", race_p_ethnicity),
-#     age = ordered(age, levels = c("0-19", "20-34", "35-49", "50-64", "65+"))
-#   ) %>%
-#   arrange(year, state_fips, sex, age, race_p_ethnicity)
-#
-# states_r <- read_csv("states_1990_asrpe.csv", col_types = "icccci")
-# states_r <- states_r %>%
-#   mutate(
-#     age = ordered(age, levels = c("0-19", "20-34", "35-49", "50-64", "65+"))
-#   ) %>%
-#   arrange(year, state_fips, sex, age, race_p_ethnicity)
-
-# Comparing the two approaches --------------------------------------------
-
-# > all.equal(states_py, states_r)
-# [1] TRUE
-# > sum(abs(states_r$population - states_py$population))
-# [1] 0
